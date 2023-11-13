@@ -72,9 +72,9 @@ void opcontrol(void);
 #endif
 
 #ifdef __cplusplus
-/**
- * You can add C++-only headers here
- */
+#include "global.h"
+#include "systems/drivetrain.h"
+#include "operatorControl.h"
 //#include <iostream>
 #endif
 
