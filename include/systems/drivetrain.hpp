@@ -1,7 +1,7 @@
 
 #pragma once
 #include "pros/misc.hpp"
-#include "global.h"
+#include "global.hpp"
 void driveTrainFunction();
 //^ Different Drive Modes
 void tankDrive(JoystickValues leftJoyStick, JoystickValues rightJoyStick);

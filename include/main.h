@@ -72,9 +72,12 @@ void opcontrol(void);
 #endif
 
 #ifdef __cplusplus
-#include "global.h"
-#include "systems/drivetrain.h"
+#include "global.hpp"
+#include "systems/drivetrain.hpp"
+#include "systems/pid.hpp"
 #include "operatorControl.h"
+#include "systems/odometry.hpp"
+#include "systems/objectInteraction.hpp"
 //#include <iostream>
 #endif
 

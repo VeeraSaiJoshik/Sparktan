@@ -1,5 +1,5 @@
 #pragma once
-#include "pros/motors.h"
+#include "main.h"
 //^ ENUMs declarations
 enum JoystickSide{
     leftSideJoyStick = 0, 
@@ -20,7 +20,7 @@ extern pros::Motor frontLeftMotor;
 extern pros::Motor rearRightMotor;
 extern pros::Motor rearLeftMotor;
 extern DriveTrainMode driveTrainMode;
-
+extern pros::IMU imuController;
 //^ Class Declarations
 class JoystickValues{
     public : 
