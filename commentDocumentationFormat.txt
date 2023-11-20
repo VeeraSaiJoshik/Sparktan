@@ -1,0 +1,18 @@
+Below is the documentation convention that all programmers from team 719S will be using. Please document any function(s) you have added to the code base by using the followiwng comment convention above 
+said function in the respective .hpp/.h file.
+
+/*
+    Function Name : <Funciton Name>
+    Author : <Author Names>
+    Description : <Brief Description of what the function does>
+    Logic : <Brief Description of how the functino works. If the functions inner workings are self explanatory, this field can be emmited>
+    Hardware : <Brief list of all the hardware that this function uses to aid during debugging. Please refer to the hardware based on the name each hardware peice is assigned in the global.h file>
+    Bugs : <Brief List and Description of any bugs or updates that need to made to this function. Not necessary if there are no bugs>
+        1. <Bug/To-Do Name> : <Brief Description>
+    Input : <List of paraments that the function requires>
+        1. <Parameter Variable Name> : <Description of what the variable stores>
+    Output : <Description of what the function returns. This field can be emmited if the function is of type "void">
+*/
+
+Please contact Veera Unnam(Jo) at either Joshikdevelop@gmail.com or unnamve@bentonvillek12.org for more information or help
+
