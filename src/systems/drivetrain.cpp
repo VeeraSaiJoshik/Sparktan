@@ -35,8 +35,8 @@ void moveLeftDrive(double voltage){
     rearLeftMotor = voltage;
 }
 void rotateDriveTrain(double voltage){
-    moveRightDrive(-1 * voltage);
-    moveLeftDrive(voltage);
+    moveRightDrive(voltage);
+    moveLeftDrive(-1 * voltage);
 }
 void tankDrive(JoystickValues leftJoyStick, JoystickValues rightJoyStick){
     moveLeftDrive(leftJoyStick.xValue);
@@ -45,4 +45,19 @@ void tankDrive(JoystickValues leftJoyStick, JoystickValues rightJoyStick){
 void arcadeDrive(JoystickValues joyStick){
     moveLeftDrive((joyStick.yValue - joyStick.xValue)/(127.0 * 127.0));
     moveRightDrive((joyStick.yValue + joyStick.xValue)/(127.0 * 127.0));
+}
+void moveDriveTrainAccurate(int millivots){
+    frontRightMotor.move_voltage(millivots);
+    frontLeftMotor.move_voltage(millivots);
+    rearRightMotor.move_voltage(millivots);
+    rearLeftMotor.move_voltage(millivots);
+}
+void rotateDriveTrainAccurate(int millivots){
+    frontRightMotor.move_voltage(millivots);
+    rearRightMotor.move_voltage(millivots);
+    frontLeftMotor.move_voltage(millivots * -1);
+    rearLeftMotor.move_voltage(millivots * -1);
+}
+double getDriveTrainVoltage(){
+    return (frontRightMotor.get_voltage() + frontLeftMotor.get_voltage() + rearLeftMotor.get_voltage() + rearRightMotor.get_voltage())/4.0;
 }

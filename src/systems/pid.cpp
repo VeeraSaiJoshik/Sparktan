@@ -1,4 +1,6 @@
 #include "main.h"
+#include "iostream"
+#include "fstream"
 //^ General Functions
 double clampMotorVoltage(double voltage){
     return voltage > 125 ? 125 : voltage < -125 ? -125 : voltage;
@@ -71,9 +73,26 @@ void rotateRobotBy(double targetDegrees){
 void autoTunePID(){
 
 }
-void robotRotationModel(){
-
+double robotRotationModel(int currentVoltage){
+    return 0;
 }
 void gatherRotationalModelDataPoints(){
-    //TODO : Write code to check angular displacement per second given the motor voltage from 0 - 125 with 2 voltage increments
+    int currentVoltage = 0;
+    double previousAngle = 0;
+    double currentAngle = 0;
+    double deltaAngle = 0;
+    std::fstream dataLog;
+    dataLog.open("/usd/PIDAutotuneData.csv");
+    while(true){
+        if(currentVoltage > 120000) break;
+        if(getDriveTrainVoltage() == currentVoltage){
+            previousAngle = imuController.get_heading();
+            pros::delay(1000);
+            currentAngle = imuController.get_heading();
+            deltaAngle = currentAngle - previousAngle;
+            dataLog << std::to_string(currentVoltage) << "," << std::to_string(deltaAngle) << "\n"; // <- Data logging techniques
+            currentVoltage = currentVoltage + 1000;
+            rotateDriveTrainAccurate(currentVoltage);
+        }
+    }
 }

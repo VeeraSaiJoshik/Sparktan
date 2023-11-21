@@ -9,5 +9,4 @@ void autonomous() {}
 void opcontrol() {
     Task primary(primaryOperatorControl);
     Task secondary(secondaryOperatorControl);
-    Task tertiary(tertiaryOperatorControl);
 }

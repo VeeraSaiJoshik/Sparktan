@@ -21,8 +21,3 @@ void secondaryOperatorControl(void* param){
         delay(20);
     }
 }
-void tertiaryOperatorControl(void* param){
-    while(true){
-        delay(20);
-    }
-}
