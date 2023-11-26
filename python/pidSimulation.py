@@ -6,7 +6,10 @@ def clampMotorSpeed(speed):
     elif (speed < -200): return -200
     return speed
 def robotRotationModel(currentVelocity):
-    return 0.12 * currentVelocity
+    #return 0.12 * currentVelocity
+    radiusOfWheel = 2
+    radiusOfRobot = 9
+    return (3.0 * radiusOfWheel * currentVelocity)/(500.0*radiusOfRobot)
 def simulationAlgorithm(marginOfError, angularError, kP, kI, kD):
     xData = []
     errorData = []
@@ -38,28 +41,69 @@ def simulationAlgorithm(marginOfError, angularError, kP, kI, kD):
     return time, errorData, throttleData, xData, error, passed
 def getAverageTime(kP, kI, kD, marginOfError):
     average = 0
-    for error in range(10, 360):
-        time, _, _, _, error, _ = simulationAlgorithm(marginOfError, error, kP, kI, kD)
-        print(error)
+    error = 10
+    while error < 360: 
+        time, _, _, _, e, _ = simulationAlgorithm(marginOfError, error, kP, kI, kD)
         average += time
-    return average/350.0
+        error += 10
+    return average/35.0
 def fitAndPlot(xData, yError, yThrottle):
     _, axis = plt.subplots(2, 1)
     axis[0].scatter(xData, yThrottle, label='raw Curve', color='red')
     axis[1].scatter(xData, yError, label='raw Curve', color='red')
     plt.show()
-
-kP = 1
+def optimize():
+    f = open("data.txt", "a")
+    marginOfError = 1
+    kP = 0
+    kI = 0
+    kD = 0
+    marginOfError = 1
+    while(True) : 
+        
+        if marginOfError < 0.01 :
+            break
+        #! Optimizing Positional
+        direction = 0
+        directionStep = 1
+        currentTime = getAverageTime(kP, kI, kD, marginOfError)
+        directionDegree = 0
+        # Finding Direction
+        while True : 
+            increase = getAverageTime(kP + pow(10, -1 * directionDegree), kI, kD, marginOfError)
+            decrease = getAverageTime(kP - pow(10, -1 * directionDegree), kI, kD, marginOfError)
+            if(increase < currentTime) : 
+                direction = 1
+                break
+            elif(decrease < currentTime) : 
+                direction = -1
+                break
+            else : 
+                directionDegree += 1
+            directionStep += 1
+        print(f'Positional Direction Found : {direction}')
+        # Finding the step value
+        stepDegree = 0
+        while True and directionDegree <= 4: 
+            if stepDegree > 4 : 
+                break
+            curTime = getAverageTime(kP, kI, kD, marginOfError)
+            newTime = getAverageTime(kP + pow(10, -1 * stepDegree) * direction, kI, kD, marginOfError)
+            f.write(f'Current Kp :  {kP}  New KP : {kP + pow(10, -1 * stepDegree) * direction}  New Time : {newTime} Current Time : {currentTime} Degree : {stepDegree}\n')
+            print(f'{kP}  {newTime} {stepDegree}')
+            if newTime > curTime : 
+                stepDegree += 1
+            else : 
+                kP = kP + pow(10, -1 * stepDegree) * direction
+        f.write("Position Done " + str(kP))
+        print("This is the margin of error : " + str(marginOfError))
+        input()
+        marginOfError = marginOfError * 0.5
+        
+    f.close()
+kP = 0
 x = []
 y = []
-for i in range(1000) : 
-    kP += 0.001
-    x.append(kP)
-    y.append(getAverageTime(kP, 0, 0, 1))
-fitAndPlot(x, y, y)
-"""print("simulation started")
-time, yError, yThrotle, x, finalError, passed = simulationAlgorithm(0.1, 10, 1, 0.001, 0.0)
-fitAndPlot(x, yError, yThrotle)
-print("simulaiton finished : " + str(time))
-print("final error : " + str(finalError))
-"""
+time, errorData, throttleData, xData, error, passed = simulationAlgorithm(0, 60, 1000, 0, 0)
+
+fitAndPlot(xData, errorData, throttleData)
