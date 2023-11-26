@@ -3,12 +3,6 @@
 
 using namespace pros;
 
-#define frontRightMotorPort 2
-#define rearRightMotorPort 3
-#define frontLeftMotorPort 4
-#define rearLeftMotorPort 5
-#define imuPort 1
-
 double PI = 3.141592653;
 Motor frontRightMotor(frontRightMotorPort, E_MOTOR_GEAR_GREEN, true);
 Motor frontLeftMotor(rearRightMotorPort, false);

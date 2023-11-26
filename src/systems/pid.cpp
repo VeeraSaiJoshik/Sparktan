@@ -5,6 +5,9 @@
 double clampMotorVoltage(double voltage){
     return voltage > 125 ? 125 : voltage < -125 ? -125 : voltage;
 }
+double clampMotorSpeed(int speed){
+    return speed > 200 ? 200 : speed < -200 ? -200 : speed;
+}
 double normalizeAngle(double angle){
     return angle > 360 ? angle - 360 : angle < 360 ? 360 + angle : angle;
 }
@@ -63,6 +66,7 @@ void rotateRobotTo(double targetAngle){
         rotateDriveTrain(clampMotorVoltage(throttleSpeed));
         
         calculateIntegral = ((throttleSpeed != clampMotorVoltage(throttleSpeed)) && ((throttleSpeed < 0 && error < 0) || (throttleSpeed > 0 && error > 0)));
+        prevError = error;
         pros::delay(20);
     }
 }
@@ -73,9 +77,7 @@ void rotateRobotBy(double targetDegrees){
 void autoTunePID(){
 
 }
-double robotRotationModel(int currentVoltage){
-    return 0;
-}
+
 void gatherRotationalModelDataPoints(){
     int currentVoltage = 0;
     double previousAngle = 0;

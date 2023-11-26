@@ -78,6 +78,13 @@ void opcontrol(void);
 #include "operatorControl.h"
 #include "systems/odometry.hpp"
 #include "systems/objectInteraction.hpp"
+// Pre-Defined Ports
+#define frontRightMotorPort 2
+#define rearRightMotorPort 3
+#define frontLeftMotorPort 4
+#define rearLeftMotorPort 5
+#define imuPort 1
+
 //#include <iostream>
 #endif
 

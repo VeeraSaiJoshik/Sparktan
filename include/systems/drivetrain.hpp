@@ -160,3 +160,33 @@ void rotateDriveTrainAccurate(int millivolts);
 */
 double getDriveTrainVoltage();
 
+/*
+    Function Name : moveDriveTrainWithVelocity
+    Author : Veera Unnam (Jo)
+    Description : This function, specifically used in PID, is used to control the drive trains movement through velocity and PID ensuring that the motors maintain a constant speed with little fluctuation
+    Hardware :
+        1. frontRightMotor 
+        2. frontLeftMotor
+        3. rearRightMotor
+        4. rearLeftMotor
+    Input : 
+        1. voltage : this variable holds a value from -200 to 200 and it dictates what dierction the drive train goes in and how fast the motors are rotating
+    Output : N/A
+*/
+void moveDriveTrainWithVelocity(int velocity);
+
+/*
+    Function Name : rotateDriveTrainWithVelocity
+    Author : Veera Unnam (Jo)
+    Description : this function rotates the entire drive train either clockwise or counter-clockwise at the specified speed. This function utilizes PID to ensure that the drive train maintains a constant speed
+    Hardware :
+        1. frontRightMotor 
+        2. frontLeftMotor
+        3. rearRightMotor
+        4. rearLeftMotor
+    Input : 
+        1. velocity : this variable holds a value from -200 to 200 which is used to determine the direction and speed in which the chassis will rotate
+    Output : N/A
+*/
+void rotateDriveTrainWithVelocity(int velocity);
+
