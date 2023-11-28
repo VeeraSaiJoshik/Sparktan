@@ -1,0 +1,31 @@
+Rules : 
+    1. Each Command to be run by the computer is seperated by a _
+    2. Each 'move' that a robot can complete can be encoded using 2 letters and all the parameters for that 'move' will follow the 2 letters = "|", and will be seperated by ','
+    3. Here are the 2 letter phrases representing each move : 
+        1. 'Mv' : Move
+            - Parameters : Distance in inches
+        2. 'Ro' : Rotate
+            - Parameters : Angle, in degrees, the robot will rotate too
+        3. 'Ca' : Catapult
+        4. 'Wi' : Pull Wings In
+        5. 'Wo' : Pull Wings Out
+        6. 'In' : Intake
+            - Parameters: This function takes a paramter called 'time' which is an integer, milliseconds, detailing how long the intake should run
+            - Note : If the 'time' parameter is set to -1, the function will run forever
+        7. 'Ot' : Outtake
+            - Parameters: This function takes a paramter called 'time' which is an integer, milliseconds, detailing how long the outtake should run
+            - Note : If the 'time' parameter is set to -1, the function will run forever
+        8. 'Si' : Stop intake/outtake
+            - This function will simply stop intake/outtake
+        9. 'Sh' : This function shoves it in
+
+Example Encoding : 
+    - 'Mv|90_Ro|20_Ca_Mv|90_Wo_In|500_Ro|180
+    - Definition : 
+        - Move 90 inches
+        - Rotate to 20 degrees
+        - Launch the Catapult
+        - Move 90 inches
+        - Wing Out
+        - Run Intake for 500 milliseconds
+        - Rotate to 180 degrees

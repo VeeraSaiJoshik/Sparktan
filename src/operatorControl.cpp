@@ -3,7 +3,6 @@
 using namespace pros;
 
 void primaryOperatorControl(void* param){
-    ButtonClass switchDriveTrainButton = ButtonClass(E_CONTROLLER_DIGITAL_A);
     while(true){
         if(switchDriveTrainButton.checkIfButtonPressed()){
             if(driveTrainMode == Arcade){
@@ -13,11 +12,15 @@ void primaryOperatorControl(void* param){
             }
         }
         driveTrainFunction();
+        intakeOperation();
+        wingOperation();
+        liftOperation();
         delay(20);
     }
 }
 void secondaryOperatorControl(void* param){
     while (true){
+        catapultOperation();
         delay(20);
     }
 }

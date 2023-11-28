@@ -14,14 +14,14 @@ double normalizeAngle(double angle){
 //* Rotational PID Code
 //^ Angular Error Functions
 double getAngularError(double currentAngle, double targetAngle){
-    double distanceClockWise = getErrorClockwise(currentAngle, targetAngle);
-    double distanceCounterClockWise = getErrorCounterclockwise(currentAngle, targetAngle);
+    double distanceClockWise = getClockwiseError(currentAngle, targetAngle);
+    double distanceCounterClockWise = getCounterClockwiseError(currentAngle, targetAngle);
     if(distanceClockWise < distanceCounterClockWise){
         return distanceClockWise;
     }
     return distanceCounterClockWise;
 }
-double getErrorClockwise(double currentAngle, double targetAngle){
+double getClockwiseError(double currentAngle, double targetAngle){
     double distanceClockWise = 0;
     if(currentAngle > targetAngle){
         distanceClockWise = (360 - currentAngle) + targetAngle;
@@ -30,7 +30,7 @@ double getErrorClockwise(double currentAngle, double targetAngle){
     }
     return distanceClockWise;
 }
-double getErrorCounterclockwise(double currentAngle, double targetAngle){
+double getCounterClockwiseError(double currentAngle, double targetAngle){
     // TODO : Check if this function returns positive or negative value for counter clockwise turns
     double distanceCounterclockWise = 0;
     if(currentAngle < targetAngle){
@@ -41,6 +41,7 @@ double getErrorCounterclockwise(double currentAngle, double targetAngle){
     return -1 * distanceCounterclockWise;
 }
 //^ PID Function
+//! Rotational
 void rotateRobotTo(double targetAngle){
     float Kp = 1.7;
     float Ki = 0.04;
@@ -63,15 +64,22 @@ void rotateRobotTo(double targetAngle){
         if(error < 2 || error > -2) break;
 
         throttleSpeed = Kp * error + Kd * derivative + Ki * integral;
-        rotateDriveTrain(clampMotorVoltage(throttleSpeed));
+        rotateDriveTrainWithVelocity(clampMotorSpeed(throttleSpeed));
         
-        calculateIntegral = ((throttleSpeed != clampMotorVoltage(throttleSpeed)) && ((throttleSpeed < 0 && error < 0) || (throttleSpeed > 0 && error > 0)));
+        calculateIntegral = ((throttleSpeed == clampMotorVoltage(throttleSpeed)) && ((throttleSpeed < 0 && error < 0) || (throttleSpeed > 0 && error > 0)));
         prevError = error;
         pros::delay(20);
     }
 }
 void rotateRobotBy(double targetDegrees){
-    rotateRobotTo(normalizeAngle(targetDegrees));
+    rotateRobotTo(normalizeAngle(imuController.get_heading() + targetDegrees));
+}
+//! Movment
+void moveRobotBy(double inches){
+    
+}
+void shove(){
+
 }
 //^ Autotune Functions
 void autoTunePID(){
@@ -96,5 +104,40 @@ void gatherRotationalModelDataPoints(){
             currentVoltage = currentVoltage + 1000;
             rotateDriveTrainAccurate(currentVoltage);
         }
+    }
+}
+//^ Measurement Functions
+void measureMotorRPMChange(int targetRPM){
+    std::fstream dataLog;
+    dataLog.open("/usd/MotorChangeData.csv");
+    int time = 0;
+    dataLog << "Target RPM : " << targetRPM << std::endl;
+    rotateDriveTrainWithVelocity(targetRPM);
+    while(true){
+        double averageVelocity = getDriveTrainVelocity();
+        if(averageVelocity == targetRPM){
+            break;
+        }
+        dataLog << time << "," << averageVelocity << "," << rearLeftMotor.get_actual_velocity() << "," << rearRightMotor.get_actual_velocity() << "," << frontLeftMotor.get_actual_velocity() << "," << frontRightMotor.get_actual_velocity() << std::endl;
+        time = time + 2;
+        pros::delay(2);
+    }
+}
+void measureAngularChangeRPM(int minimumRPM, int maximumRPM){
+    float deltaAnglePrevious = 0;
+    float deltaAngle = 0;
+    std::fstream dataLog;
+    dataLog.open("/usd/AngularChangeRPM.csv");
+    for(int RPM = minimumRPM; RPM <= maximumRPM; RPM++){
+        rotateDriveTrainWithVelocity(RPM);
+        // wait till the RPM is actually reached
+        while(getDriveTrainVelocity() != RPM) pros::delay(2);
+        // After the RPM is reached run the program for 1 second and log the delta angle
+        deltaAnglePrevious = imuController.get_heading();
+        pros::delay(1000);
+        deltaAngle = imuController.get_heading() - deltaAnglePrevious;
+        // repeat
+        dataLog << RPM << "," << deltaAngle << std::endl;
+        pros::delay(10);
     }
 }

@@ -14,13 +14,24 @@ enum DriveTrainMode{
 //& General Variables
 extern double PI;
 extern pros::Controller brain;
+extern pros::ADIDigitalIn catapultLimitSwitch;
+extern pros::ADIDigitalOut wings;
+extern bool catapultRunning;
+extern bool wingsExtended;
+extern std::string autonCommandStringEncoded;
 //& Drivetrain Variables
 extern pros::Motor frontRightMotor;
 extern pros::Motor frontLeftMotor;
 extern pros::Motor rearRightMotor;
 extern pros::Motor rearLeftMotor;
+extern pros::Motor intakeMotor;
+extern pros::Motor catapultMotor;
+extern pros::Motor liftMotor;
 extern DriveTrainMode driveTrainMode;
 extern pros::IMU imuController;
+extern ButtonClass switchDriveTrainButton;
+extern ButtonClass matchLoadButton;
+extern ButtonClass extendWings;
 //^ Class Declarations
 class JoystickValues{
     public : 

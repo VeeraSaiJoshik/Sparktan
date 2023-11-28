@@ -160,6 +160,8 @@ void rotateDriveTrainAccurate(int millivolts);
 */
 double getDriveTrainVoltage();
 
+double getDriveTrainVelocity();
+
 /*
     Function Name : moveDriveTrainWithVelocity
     Author : Veera Unnam (Jo)
@@ -189,4 +191,6 @@ void moveDriveTrainWithVelocity(int velocity);
     Output : N/A
 */
 void rotateDriveTrainWithVelocity(int velocity);
+
+
 

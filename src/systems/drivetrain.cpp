@@ -61,6 +61,9 @@ void rotateDriveTrainAccurate(int millivots){
 double getDriveTrainVoltage(){
     return (frontRightMotor.get_voltage() + frontLeftMotor.get_voltage() + rearLeftMotor.get_voltage() + rearRightMotor.get_voltage())/4.0;
 }
+double getDriveTrainVelocity(){
+    return (frontRightMotor.get_actual_velocity() + frontLeftMotor.get_actual_velocity() + rearLeftMotor.get_actual_velocity() + rearRightMotor.get_actual_velocity())/4.0;
+}
 void moveDriveTrainWithVelocity(int velocity){
     frontRightMotor.move_velocity(velocity);
     frontLeftMotor.move_velocity(velocity);

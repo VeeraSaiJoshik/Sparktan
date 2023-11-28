@@ -9,8 +9,9 @@ def robotRotationModel(currentVelocity):
     #return 0.12 * currentVelocity
     radiusOfWheel = 2
     radiusOfRobot = 9
-    return (3.0 * radiusOfWheel * currentVelocity)/(500.0*radiusOfRobot)
+    return (3.0 * radiusOfWheel * currentVelocity * 1)/(500.0*radiusOfRobot)
 def simulationAlgorithm(marginOfError, angularError, kP, kI, kD):
+    # for this simulation algorithm, we have to update our calculations every millisecond compared to the conventional 20 milliseconds
     xData = []
     errorData = []
     throttleData = []
@@ -104,6 +105,6 @@ def optimize():
 kP = 0
 x = []
 y = []
-time, errorData, throttleData, xData, error, passed = simulationAlgorithm(0, 60, 1000, 0, 0)
+time, errorData, throttleData, xData, error, passed = simulationAlgorithm(0, 60, 200, 0, 0)
 
 fitAndPlot(xData, errorData, throttleData)
