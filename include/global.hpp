@@ -1,6 +1,7 @@
 #pragma once
 #include "main.h"
 //^ ENUMs declarations
+extern pros::Controller brain;
 enum JoystickSide{
     leftSideJoyStick = 0, 
     rightSideJoyStick = 1
@@ -10,35 +11,12 @@ enum DriveTrainMode{
     Arcade = 1
 };
 
-//^ Variable Declarations
-//& General Variables
-extern double PI;
-extern pros::Controller brain;
-extern pros::ADIDigitalIn catapultLimitSwitch;
-extern pros::ADIDigitalOut wings;
-extern bool catapultRunning;
-extern bool wingsExtended;
-extern std::string autonCommandStringEncoded;
-//& Drivetrain Variables
-extern pros::Motor frontRightMotor;
-extern pros::Motor frontLeftMotor;
-extern pros::Motor rearRightMotor;
-extern pros::Motor rearLeftMotor;
-extern pros::Motor intakeMotor;
-extern pros::Motor catapultMotor;
-extern pros::Motor liftMotor;
-extern DriveTrainMode driveTrainMode;
-extern pros::IMU imuController;
-extern ButtonClass switchDriveTrainButton;
-extern ButtonClass matchLoadButton;
-extern ButtonClass extendWings;
-//^ Class Declarations
 class JoystickValues{
     public : 
         double xValue;
         double yValue;
         bool joyStickUsed(){
-            return (xValue == 0 && yValue == 0);
+            return (xValue != 0 || yValue != 0);
         }
         JoystickValues(JoystickSide joyStick){
             if(joyStick == leftSideJoyStick){
@@ -50,21 +28,89 @@ class JoystickValues{
             }
         }
 };
+
 class ButtonClass{
     public : 
         pros::controller_digital_e_t button;
-        bool currentlyPressed = false;
-        bool buttonPressed = false;
+        bool buttonPressedPreviously = false;
         ButtonClass(pros::controller_digital_e_t buttonTemp){
             button = buttonTemp;
         }
         bool checkIfButtonPressed(){
-            if(currentlyPressed != brain.get_digital(button)){
-                currentlyPressed = brain.get_digital(button);
-                buttonPressed = currentlyPressed == false;
-            }else{
-                currentlyPressed = brain.get_digital(button);
-            }
-            return currentlyPressed;
+            bool currentlyPressed = brain.get_digital(button);
+            bool buttonPressed = false;
+            if(buttonPressedPreviously && currentlyPressed == false) buttonPressed = true;
+            buttonPressedPreviously = currentlyPressed;
+            return buttonPressed;
         }
 };
+
+class OdometryPod{
+	public :
+		double previousTicks = 0;
+		double wheelRadius = 0;
+		double distanceToCenter = 0;
+		pros::ADIEncoder encoder;
+		OdometryPod(int portTop, int portBototm, bool reverse, int wheelRadiusTemp = 0, int distanceToCenterTemp = 0) : encoder(portTop, portBototm, reverse) {
+			wheelRadius = wheelRadiusTemp;
+			distanceToCenter = distanceToCenterTemp;
+		}
+		// Setter Functions
+		void setDistanceToCenter(double dtctemp){	
+			distanceToCenter = dtctemp;
+		}
+		void setWheelRadiusValue(double wheelRadiusTemp){
+			wheelRadius = wheelRadiusTemp;
+		}
+		// getter functions
+		double getDeltaTicks(){
+			double deltaTicks = encoder.get_value() - previousTicks;
+			previousTicks = encoder.get_value();
+			return deltaTicks;
+		}
+		
+		double getDistanceTraveled() {
+            double deltaTheta = getDeltaTicks() * (2*3.141592653/90);
+            return deltaTheta * wheelRadius;
+		}
+};
+
+//^ Variable Declarations
+//& General Variables
+extern double PI;
+
+extern pros::ADIDigitalIn catapultLimitSwitch;
+extern bool catapultRunning;
+extern std::string autonCommandStringEncoded;
+extern pros::IMU imuController;
+extern ButtonClass matchLoadButton;
+extern ButtonClass lockLiftButton;
+extern int armTotalTicks;
+
+//& Drivetrain Variables
+extern pros::Motor frontRightMotor;
+extern pros::Motor frontLeftMotor;
+extern pros::Motor rearRightMotor;
+extern pros::Motor rearLeftMotor;
+extern DriveTrainMode driveTrainMode;
+extern ButtonClass switchDriveTrainButton;
+
+//& Other Motor Variables
+extern pros::Motor intakeMotor;
+extern pros::Motor catapultMotor;
+extern pros::Motor liftMotor;
+extern pros::Motor rachetMotor;
+
+//& Odometry Variables
+//* Global Location Variable
+extern double globalX;
+extern double globalY;
+//* Tracker Variables
+extern double thetaPrevious;
+//* constant variables
+extern double degToRad;
+//* sensor variables
+extern OdometryPod rightPod;
+extern OdometryPod leftPod;
+extern OdometryPod backPod;
+

@@ -11,11 +11,10 @@ void rotateRobotTo(double targetAngle);
 void rotateRobotBy(double targetDegrees);
 //! Movement
 void moveRobotBy(double inches);
-void shove();
 //^ Autotune Functions
 void autoTunePID();
 void robotRotationModel();
 void gatherRotationalModelDataPoints();
 //^ Measurement Functions
-void measureMotorRPMChange();
+void measureMotorRPMChange(int rpm);
 void measureDeltaChangeBasedonRPM();

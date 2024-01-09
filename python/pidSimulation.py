@@ -23,8 +23,8 @@ def simulationAlgorithm(marginOfError, angularError, kP, kI, kD):
     prevError = angularError
     throttleSpeed = 0
     passed = False
-    while(time <= 60 * 500):
-        if(calculateIntegral): integral += error
+    while(time <= 60 * 1000):
+        if(abs(error) < 25): integral += error
         derivative = error - prevError
         if(error <= marginOfError and error >= -1 * marginOfError):
             passed = True
@@ -105,6 +105,6 @@ def optimize():
 kP = 0
 x = []
 y = []
-time, errorData, throttleData, xData, error, passed = simulationAlgorithm(0, 60, 200, 0, 0)
+time, errorData, throttleData, xData, error, passed = simulationAlgorithm(0, 90, 1.15, 0.0265, 4.2)
 
 fitAndPlot(xData, errorData, throttleData)

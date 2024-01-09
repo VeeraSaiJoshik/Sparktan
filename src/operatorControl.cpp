@@ -3,6 +3,7 @@
 using namespace pros;
 
 void primaryOperatorControl(void* param){
+    rachetMotor.set_brake_mode(MOTOR_BRAKE_HOLD);
     while(true){
         if(switchDriveTrainButton.checkIfButtonPressed()){
             if(driveTrainMode == Arcade){
@@ -11,9 +12,9 @@ void primaryOperatorControl(void* param){
                 driveTrainMode = Arcade;
             }
         }
+        pros::lcd::set_text(5, std::to_string(imuController.get_heading()));
         driveTrainFunction();
         intakeOperation();
-        wingOperation();
         liftOperation();
         delay(20);
     }
@@ -21,6 +22,7 @@ void primaryOperatorControl(void* param){
 void secondaryOperatorControl(void* param){
     while (true){
         catapultOperation();
+        
         delay(20);
     }
 }

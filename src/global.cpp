@@ -5,24 +5,40 @@ using namespace pros;
 
 double PI = 3.141592653;
 //? Drive Train Motor
-Motor frontRightMotor(frontRightMotorPort, E_MOTOR_GEAR_GREEN, true);
-Motor frontLeftMotor(rearRightMotorPort, E_MOTOR_GEAR_GREEN, false);
-Motor rearRightMotor(frontLeftMotorPort, E_MOTOR_GEAR_GREEN, true);
-Motor rearLeftMotor(rearLeftMotorPort, E_MOTOR_GEAR_GREEN, false);
+Motor frontRightMotor(frontRightMotorPort, E_MOTOR_GEAR_GREEN, false);
+Motor frontLeftMotor(frontLeftMotorPort, E_MOTOR_GEAR_GREEN, true);
+Motor rearRightMotor(rearRightMotorPort, E_MOTOR_GEAR_GREEN, false);
+Motor rearLeftMotor(rearLeftMotorPort, E_MOTOR_GEAR_GREEN, true);
 //? Object Interaction Motor
-Motor intakeMotor(intakeMotorPort, E_MOTOR_GEAR_BLUE, false);
+Motor intakeMotor(intakeMotorPort, E_MOTOR_GEAR_BLUE, true);
 Motor catapultMotor(catapultMotorPort, E_MOTOR_GEAR_RED, false);
 Motor liftMotor(liftMotorPort, E_MOTOR_GEAR_RED, false);
-pros::ADIDigitalOut piston (wingsPort);
+Motor rachetMotor(rachetMotorPort, E_MOTOR_GEAR_RED, false);
 //? Button Class
 ButtonClass switchDriveTrainButton = ButtonClass(DIGITAL_A);
 ButtonClass matchLoadButton = ButtonClass(DIGITAL_B);
-ButtonClass extendWings = ButtonClass(DIGITAL_UP);
+ButtonClass lockLiftButton = ButtonClass(DIGITAL_DOWN);
 //? Main Variables
-DriveTrainMode driveTrainMode = Arcade;
+DriveTrainMode driveTrainMode = Tank;
 Controller brain = Controller(CONTROLLER_MASTER);
 ADIDigitalIn catapultLimitSwitch(1);
 bool catapultRunning = false;
-bool wingsExtended = false;
 IMU imuController(imuPort);
 std::string autonCommandStringEncoded = ""; // <- Insert the required command for auton over here
+int armTotalTicks = 6000;
+//& Odometry Variables
+//* Global Location Variable
+double globalX = 0;
+double globalY = 0;
+//* Tracker Variables
+double thetaPrevious = 0;
+//* constant variables
+double degToRad = PI/180;
+double distanceBackWheelToCenter = 0;
+double distanceLeftWheelToCenter = 0;
+double distanceRightWheelToCenter = 0;
+double wheelRadius = 0;
+//* sensor variables
+OdometryPod rightPod = OdometryPod(1, 2, true, wheelRadius, distanceRightWheelToCenter);
+OdometryPod leftPod = OdometryPod(3, 4, false, wheelRadius, distanceRightWheelToCenter);
+OdometryPod backPod = OdometryPod(5, 6, true, wheelRadius, distanceRightWheelToCenter);

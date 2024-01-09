@@ -76,9 +76,10 @@ void opcontrol(void);
 #include "systems/drivetrain.hpp"
 #include "systems/pid.hpp"
 #include "operatorControl.h"
-#include "systems/odometry.hpp"
 #include "systems/objectInteraction.hpp"
 #include "systems/auton.hpp"
+#include "systems/gui.hpp"
+//#include "pros/apix.h"
 #include "vector"
 #include "string"
 // Pre-Defined Ports
@@ -90,7 +91,7 @@ void opcontrol(void);
 #define intakeMotorPort 6
 #define catapultMotorPort 7
 #define liftMotorPort 8
-#define wingsPort 'A'
+#define rachetMotorPort 9
 //#include <iostream>
 #endif
 

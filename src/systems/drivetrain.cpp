@@ -1,4 +1,5 @@
 #include "main.h"
+#include "cmath"
 
 void driveTrainFunction(){
     JoystickValues leftJoyStick = JoystickValues(leftSideJoyStick);
@@ -6,29 +7,30 @@ void driveTrainFunction(){
     if(driveTrainMode == Arcade){
         if(leftJoyStick.joyStickUsed()){
             arcadeDrive(leftJoyStick);
-        }else if(rightJoyStick.joyStickUsed()){
-            arcadeDrive(rightJoyStick);
         }else{
-            brakeDriveTrain();
+            arcadeDrive(rightJoyStick);
         }
     }else{
+        tankDrive(leftJoyStick, rightJoyStick);
     }
 }
 void brakeDriveTrain(){
+    frontLeftMotor = 0;
     frontLeftMotor.brake();
+    frontRightMotor = 0;
     frontRightMotor.brake();
+    rearLeftMotor = 0;
     rearLeftMotor.brake();
+    rearRightMotor = 0;
     rearRightMotor.brake();
 }
 void moveDriveTrain(double voltage){
-    frontLeftMotor = voltage;
-    frontRightMotor = voltage;
-    rearLeftMotor = voltage;
-    rearRightMotor = voltage;
+    moveRightDrive(voltage);
+    moveLeftDrive(voltage);
 }
-void moveRightDrive(double voltage){
+void moveRightDrive(int voltage){
     frontRightMotor = voltage;
-    rearLeftMotor = voltage;
+    rearRightMotor = voltage;
 }
 void moveLeftDrive(double voltage){
     frontLeftMotor = voltage;
@@ -39,18 +41,18 @@ void rotateDriveTrain(double voltage){
     moveLeftDrive(voltage);
 }
 void tankDrive(JoystickValues leftJoyStick, JoystickValues rightJoyStick){
-    moveLeftDrive(leftJoyStick.xValue);
-    moveRightDrive(rightJoyStick.xValue);
+    moveLeftDrive(leftJoyStick.yValue);
+    moveRightDrive(rightJoyStick.yValue);
 }
 void arcadeDrive(JoystickValues joyStick){
-    moveLeftDrive((joyStick.yValue - joyStick.xValue)/(127.0 * 127.0));
-    moveRightDrive((joyStick.yValue + joyStick.xValue)/(127.0 * 127.0));
+    moveLeftDrive(pow((joyStick.yValue + joyStick.xValue),3)/(127.0 * 127.0));
+    moveRightDrive(pow((joyStick.yValue - joyStick.xValue),3)/(127.0 * 127.0));
 }
-void moveDriveTrainAccurate(int millivots){
-    frontRightMotor.move_voltage(millivots);
-    frontLeftMotor.move_voltage(millivots);
-    rearRightMotor.move_voltage(millivots);
-    rearLeftMotor.move_voltage(millivots);
+void moveDriveTrainAccurate(int millivolts){
+    frontRightMotor.move_voltage(millivolts);
+    frontLeftMotor.move_voltage(millivolts);
+    rearRightMotor.move_voltage(millivolts);
+    rearLeftMotor.move_voltage(millivolts);
 }
 void rotateDriveTrainAccurate(int millivots){
     frontRightMotor.move_voltage(millivots * -1);
