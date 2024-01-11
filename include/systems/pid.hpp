@@ -9,6 +9,7 @@ double getClockwiseError(double staringAngle, double targetAngle);
 //! Rotational
 void rotateRobotTo(double targetAngle);
 void rotateRobotBy(double targetDegrees);
+void moveRobotByPID(double distance);
 //! Movement
 void moveRobotBy(double inches);
 //^ Autotune Functions

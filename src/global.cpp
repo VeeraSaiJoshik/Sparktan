@@ -5,15 +5,16 @@ using namespace pros;
 
 double PI = 3.141592653;
 //? Drive Train Motor
-Motor frontRightMotor(frontRightMotorPort, E_MOTOR_GEAR_GREEN, false);
-Motor frontLeftMotor(frontLeftMotorPort, E_MOTOR_GEAR_GREEN, true);
-Motor rearRightMotor(rearRightMotorPort, E_MOTOR_GEAR_GREEN, false);
-Motor rearLeftMotor(rearLeftMotorPort, E_MOTOR_GEAR_GREEN, true);
+Motor frontRightMotor(frontRightMotorPort, E_MOTOR_GEAR_GREEN, true);
+Motor frontLeftMotor(frontLeftMotorPort, E_MOTOR_GEAR_GREEN, false);
+Motor rearRightMotor(rearRightMotorPort, E_MOTOR_GEAR_GREEN, true);
+Motor rearLeftMotor(rearLeftMotorPort, E_MOTOR_GEAR_GREEN, false);
 //? Object Interaction Motor
 Motor intakeMotor(intakeMotorPort, E_MOTOR_GEAR_BLUE, true);
-Motor catapultMotor(catapultMotorPort, E_MOTOR_GEAR_RED, false);
+//Motor catapultMotor(catapultMotorPort, E_MOTOR_GEAR_RED, false);
 Motor liftMotor(liftMotorPort, E_MOTOR_GEAR_RED, false);
 Motor rachetMotor(rachetMotorPort, E_MOTOR_GEAR_RED, false);
+Motor catapultMotor(puncherPort, E_MOTOR_GEAR_RED, false);
 //? Button Class
 ButtonClass switchDriveTrainButton = ButtonClass(DIGITAL_A);
 ButtonClass matchLoadButton = ButtonClass(DIGITAL_B);

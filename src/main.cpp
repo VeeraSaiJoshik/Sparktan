@@ -3,7 +3,7 @@
 
 void initialize() {
     // calibrating the screen    
-    /*
+    pros::lcd::initialize();
     // declaring all the variable values and brake values
     liftMotor.set_brake_mode(MOTOR_BRAKE_HOLD);
     catapultMotor.set_brake_mode(MOTOR_BRAKE_HOLD);
@@ -21,7 +21,7 @@ void initialize() {
 		pros::lcd::set_text(1, "IMU is Calibrating : DO NOT TOUCH");
 		pros::delay(100);
 	}
-    pros::lcd::set_text(1, "YEAH THIS IS DONE");*/
+    pros::lcd::set_text(1, "YEAH THIS IS DONE");
     
 }
 void disabled() {}
@@ -38,14 +38,14 @@ void autonomous() {
 */
 
 void opcontrol() {
-   // pros::lcd::set_text(6, "OP COntrol has started");
-   // pros::Task primary(primaryOperatorControl);
-   // pros::Task secondary(secondaryOperatorControl);
+   pros::lcd::set_text(6, "OP COntrol has started");
+   pros::Task primary(primaryOperatorControl);
+   pros::Task secondary(secondaryOperatorControl);
    //rotateRobotTo(90);
-   odomGUI gui = odomGUI();
+   /*odomGUI gui = odomGUI();
    lv_mem_init();
    while(true){
     gui.draw();
     pros::delay(1000);
-   }
+   }*/
 }

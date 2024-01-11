@@ -11,8 +11,14 @@ void primaryOperatorControl(void* param){
             }else{
                 driveTrainMode = Arcade;
             }
+            moveRobotBy(10);
+            //rotateRobotTo(180);
+            //moveRobotBy(5);
+            //intakeMotor = 50;
         }
-        pros::lcd::set_text(5, std::to_string(imuController.get_heading()));
+        pros::lcd::set_text(5, std::to_string(rightPod.getDeltaTicks()));
+        pros::lcd::set_text(6, std::to_string(backPod.getDeltaTicks()));
+        
         driveTrainFunction();
         intakeOperation();
         liftOperation();

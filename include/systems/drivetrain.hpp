@@ -88,7 +88,7 @@ void brakeDriveTrain();
         2. rearRightMotor
     Output : N/A
 */
-void moveRightDrive(double voltage);
+void moveRightDrive(int voltage);
 
 /*
     Function Name : moveLeftDrive
@@ -99,7 +99,7 @@ void moveRightDrive(double voltage);
         2. rearLeftMotor
     Output : N/A
 */
-void moveLeftDrive(double voltage);
+void moveLeftDrive(int voltage);
 
 /*
     Function Name : rotateDriveTrain

@@ -1,4 +1,5 @@
-
+import matplotlib.pyplot as plt
+from matplotlib.widgets import Slider, Button
 import cv2
 import numpy as np
 import math
@@ -12,10 +13,30 @@ class coordinates :
         self.y = globalHeight/2 - y
     def convertToRaw(self) : 
         return (int(self.x + globalHeight/2), int(globalHeight/2 - self.y))
+    def convertToRawX(self) : 
+        return int(self.x + globalHeight/2)
+    def convertToRawY(self) : 
+        return int(globalHeight/2 - self.y)
+    def __str__(self) -> str:
+        return "(" + str(self.x) + "," + str(self.y) + ")"
+class pathCoordinates : 
+    def __init__(self, x, y, theta) : 
+        self.x = x
+        self.y = y
+        self.theta = theta
+    def convertFromRaw(self, x, y):
+        self.x = x - globalHeight/2
+        self.y = globalHeight/2 - y
+    def convertToRaw(self) : 
+        return (int(self.x + globalHeight/2), int(globalHeight/2 - self.y))
+    def convertToRawX(self) : 
+        return int(self.x + globalHeight/2)
+    def convertToRawY(self) : 
+        return int(globalHeight/2 - self.y)
     def __str__(self) -> str:
         return "(" + str(self.x) + "," + str(self.y) + ")"
 class RobotClass :
-    def __init__(self, h, w):
+    def __init__(self, w, h):
         # Global Position Variables
         self.x = 0
         self.y = 0
@@ -55,10 +76,10 @@ class RobotClass :
         shiftIndex = 0
         verticalShift = False
         borderWidth = 1
-        if topLeft[1] - bottomLeft[1] == 0 : 
+        if topLeft[1] - bottomLeft[1] == 0 or topLeft[0] - topRight[0] == 0: 
             yShift = 0
             xShift = 1
-            shiftIndex = self.height
+            shiftIndex = self.width
           #  print("d2")
             if((topLeft[0] - bottomLeft[0]) < 0): xShift = -1
             
@@ -73,9 +94,9 @@ class RobotClass :
             xShift = 1
             yShift = (topLeft[1] - bottomLeft[1])/(topLeft[0] - bottomLeft[0]) 
             if topLeft[0] > bottomLeft[0] : yShift *= -1
-            shiftIndex = abs(math.cos(self.theta) * self.height)
+            shiftIndex = abs(math.cos(self.theta) * self.width)
             if((topLeft[0] - bottomLeft[0]) < 0): xShift = -1
-            borderWidth = self.height/shiftIndex
+            borderWidth = self.width/shiftIndex
             # Vertical Shift
             if abs((topLeft[1] - topRight[1])/(topLeft[0] - topRight[0])) < abs(yShift):
                 verticalShift = True
@@ -134,17 +155,17 @@ def injectPoints(path, injectDistance) :
         else : 
             slope = (y1 - y2)/(x1 - x2)
             y_int = y1 - slope * x1
-            print(y_int)
+            #print(y_int)
             deltaX = math.cos(math.atan(slope)) * injectDistance
             if x1 > x2 : deltaX *= -1
             curX = x1
-            print(deltaX, curX)
+            #print(deltaX, curX)
             while True : 
                 curX += deltaX
-                print(p1, p2)
-                print("slope : " + str(slope))
+                #print(p1, p2)
+                #print("slope : " + str(slope))
                 newPoint = coordinates(curX, (slope * curX + y_int))  
-                print((newPoint.x, newPoint.y))
+                #print((newPoint.x, newPoint.y))
                 if((newPoint.x >= x1 and newPoint.x <= x2) or (newPoint.x >= x2 and newPoint.x <= x1)) and ((newPoint.y >= y1 and newPoint.y <= y2) or (newPoint.y >= y2 and newPoint.y <= y1)) : 
                     injectedPoints.append(newPoint)
                 else : 
@@ -163,8 +184,8 @@ def gradientAscent(path, epoch, alpha, beta, frame) :
             # Optimizing Y Coordinates
             newPath[pointIndex].y += alpha * (path[pointIndex].y - newPath[pointIndex].y)
             newPath[pointIndex].y += beta * (newPath[pointIndex + 1].y + newPath[pointIndex - 1].y - 2 * newPath[pointIndex].y)
-        print("epoch : " + str(i))
-        print(len(newPath))
+        #print("epoch : " + str(i))
+        #print(len(newPath))
     for point in newPath : 
         cv2.circle(tempFrame, point.convertToRaw(), 3, (255, 0, 0), -1)
     cv2.imshow("optimizing", tempFrame)
@@ -204,10 +225,10 @@ def checkCollisions(path, bot, ogFrame):
         bot.draw_robot(frame)
         cv2.imshow("Sim", frame)
         cv2.waitKey(1)
-def simulatePurePursuit(mainFrame):
+def  simulatePurePursuit(mainFrame):
     while True : 
         frame = mainFrame.copy()
-        robot.theta += math.radians(1)#math.pi/180
+        robot.theta = math.radians(45)#math.pi/180
         robot.draw_robot(frame)
         cv2.imshow("main", frame)
         flag = False
@@ -219,6 +240,83 @@ def mousePoints(event, x, y, flags, paramgs) :
         tempCoord = coordinates(0, 0)
         tempCoord.convertFromRaw(x, y)
         pathOriginalPoints.append(tempCoord)
+def chooseInitialPosition(event, x, y, flags, paramgs) : 
+    startPosition.convertFromRaw(x, y)
+def chooseInitialAngle(event, x, y, flags, paramgs):
+    anglePosition.convertFromRaw(x, y)
+# Path Planning
+
+def pathPlanning(ogFrame):
+    global startPosition
+    global startTheta 
+    global anglePosition
+    global flag
+    flag = False
+    startTheta = 0
+    startPosition = coordinates(0, 0)
+    sliderImage = np.zeros((100,520,3), np.uint8)
+    # Choosing Position
+    while(True):
+        frame = ogFrame.copy()
+        
+        robot.x = startPosition.convertToRaw()[0]
+        robot.y = startPosition.convertToRaw()[1]
+        if startPosition.x != 0 and startPosition.y != 0 : 
+            robot.draw_robot(frame)
+        cv2.imshow("Original Image", frame)
+        cv2.setMouseCallback("Original Image", chooseInitialPosition)
+        
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            cv2.destroyAllWindows()
+            break
+    # Choosing Angle
+    anglePosition = coordinates(0, 0)
+    while(True):
+        frame = ogFrame.copy()
+        
+        deltaX = anglePosition.x - startPosition.x
+        deltaY = anglePosition.y - startPosition.y
+        if deltaX == 0: 
+            if deltaY > 0 : 
+                robot.theta = math.radians(90)
+            else : 
+                robot.theta = math.radians(180)
+        else : 
+            robot.theta = abs(math.atan(deltaY/deltaX))
+            if deltaX > 0 and deltaY > 0: 
+                robot.theta += 0
+            elif deltaX < 0 and deltaY > 0: 
+                robot.theta = math.radians(180) - robot.theta
+            elif deltaX < 0 and deltaY < 0: 
+                robot.theta = math.radians(180) + robot.theta
+            elif deltaX > 0 and deltaY < 0: 
+                robot.theta = math.radians(360) - robot.theta
+            print(math.degrees(robot.theta))
+            robot.draw_robot(frame)
+            cv2.line(frame, (robot.x, robot.y), (int(anglePosition.convertToRawX()), int(anglePosition.convertToRawY())), (0,0,255), 3)
+            #cv2.line(frame, (robot.x, robot.y), (int(robot.x + deltaX), robot.y), (0,0,255), 3)
+            #cv2.line(frame, (int(robot.x + deltaX), robot.y), (int(robot.x + deltaX), int(robot.y - deltaY)), (0,0,255), 3)
+        
+        
+        cv2.imshow("Original Image", frame)
+        cv2.setMouseCallback("Original Image", chooseInitialAngle)
+        
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            cv2.destroyAllWindows()
+            break
+    pointsList = [
+        pathCoordinates(startPosition.x, startPosition.y, robot.theta)
+    ]
+    while(True):
+        frame = ogFrame.copy()
+        # Display Past Location
+        # Choose Location
+        # Choose Angle
+        cv2.imshow("Original Image", frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            cv2.destroyAllWindows()
+            break
+    
 # Global Variables
 globalHeight = 1800
 globalWidth = 1800
@@ -228,10 +326,10 @@ inchesToPixels = globalHeight/144.0
 mainFrame = np.zeros((globalHeight, globalWidth, 3), np.uint8)
 fildImage = cv2.imread("fieldImage.png")
 mainFrame[0:globalHeight, 0:globalHeight] = fildImage
-robot = RobotClass(int(19 * inchesToPixels), int(19 * inchesToPixels))
+robot = RobotClass(int(19 * inchesToPixels), int(17.5 * inchesToPixels))
 robot.x = 450
 robot.y = 450
 #simulatePurePursuit(mainFrame)
-finalPath = smoothenPath(mainFrame, 10)
-checkCollisions(finalPath, robot, mainFrame)
-cv2.waitKey(0)
+#finalPath = smoothenPath(mainFrame, 10)
+#checkCollisions(finalPath, robot, mainFrame)
+pathPlanning(mainFrame)

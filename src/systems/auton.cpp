@@ -6,6 +6,9 @@ void moveForward(double inches){
 void rotateTo(double degrees){
     rotateRobotTo(degrees);
 }
+void moveTo(double x, double y){
+    
+}
 void runIntake(int milliseconds){
     intakeMotor.move_velocity(600);
     if(milliseconds != -1){
@@ -98,7 +101,14 @@ void recalibratePosition(){
 
 }
 void displayOdomParamters(){
-
+    
+}
+void odometryThread(){
+    while(true){
+        updateGlobalVariables();
+        
+        pros::delay(20);
+    }
 }
 //? Auton Routines
 void leftSideAutonomous(){

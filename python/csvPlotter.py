@@ -33,7 +33,7 @@ def graphPIDValues(fileName):
     ActualThorttleRightBackMotorList = []
     ErrorList = []
     for row in data : 
-        Time, TargetThrottle, ActualThrottleLeftMotor, ActualThrottleRightMotor, ActualThrottleLeftBackMotor, ActualThorttleRightBackMotor, Error, _ = row.split(',')
+        Time, TargetThrottle, ActualThrottleLeftMotor, ActualThrottleRightMotor, ActualThrottleLeftBackMotor, ActualThorttleRightBackMotor, Error= row.split(',')
         
         TimeList.append(float(Time))
         TargetThrottleList.append(float(TargetThrottle))
@@ -53,12 +53,13 @@ def graphPIDValues(fileName):
     axis[1][1].scatter(TimeList, ActualThrottleLeftBackMotorList, label='Back Left Throttle', color='orange')
     axis[1][2].scatter(TimeList, ActualThorttleRightBackMotorList, label='Back Right Throttle', color='hotpink')
     axis[1][3].scatter(TimeList, ErrorList, label='Error', color='magenta')"""
-    plt.scatter(x=TimeList, y=TargetThrottleList)
+    #plt.scatter(x=TimeList, y=TargetThrottleList)
     plt.scatter(x=TimeList, y=ErrorList)
-    plt.scatter(x=TimeList, y=ActualThrottleLeftBackMotorList)
+    #plt.scatter(x=TimeList, y=ActualThrottleLeftBackMotorList)
     classes = ['Target', 'Error', 'Actual Right Front']
     plt.legend(labels=classes)
     plt.show()
     plt.show()
 #graphRPM("data/RPM0to50.csv")
-graphPIDValues("data/rotationData.csv")
+val = input()
+graphPIDValues("data/rotateDataTest" + val + ".csv")

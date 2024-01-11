@@ -15,6 +15,7 @@ void driveTrainFunction(){
     }
 }
 void brakeDriveTrain(){
+    
     frontLeftMotor = 0;
     frontLeftMotor.brake();
     frontRightMotor = 0;
@@ -24,21 +25,22 @@ void brakeDriveTrain(){
     rearRightMotor = 0;
     rearRightMotor.brake();
 }
+void moveRightDrive(int voltage){
+    frontRightMotor.move_voltage(voltage * 1000);
+    rearRightMotor.move_voltage(voltage * 1000);
+}
+void moveLeftDrive(int voltage){
+    frontLeftMotor.move_voltage(voltage * 1000);
+    rearLeftMotor.move_voltage(voltage * 1000);
+}
 void moveDriveTrain(double voltage){
     moveRightDrive(voltage);
     moveLeftDrive(voltage);
 }
-void moveRightDrive(int voltage){
-    frontRightMotor = voltage;
-    rearRightMotor = voltage;
-}
-void moveLeftDrive(double voltage){
-    frontLeftMotor = voltage;
-    rearLeftMotor = voltage;
-}
+
 void rotateDriveTrain(double voltage){
-    moveRightDrive(-1 * voltage);
-    moveLeftDrive(voltage);
+    moveRightDrive(voltage);
+    moveLeftDrive(-1 * voltage);
 }
 void tankDrive(JoystickValues leftJoyStick, JoystickValues rightJoyStick){
     moveLeftDrive(leftJoyStick.yValue);

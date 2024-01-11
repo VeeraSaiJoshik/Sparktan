@@ -78,20 +78,21 @@ void opcontrol(void);
 #include "operatorControl.h"
 #include "systems/objectInteraction.hpp"
 #include "systems/auton.hpp"
-#include "systems/gui.hpp"
 //#include "pros/apix.h"
 #include "vector"
 #include "string"
 // Pre-Defined Ports
-#define frontRightMotorPort 2
-#define rearRightMotorPort 3
-#define frontLeftMotorPort 4
-#define rearLeftMotorPort 5
+#define frontRightMotorPort 4
+#define rearRightMotorPort 5
+#define frontLeftMotorPort 2
+#define rearLeftMotorPort 3
 #define imuPort 1
-#define intakeMotorPort 6
-#define catapultMotorPort 7
-#define liftMotorPort 8
-#define rachetMotorPort 9
+#define intakeMotorPort 8
+#define liftMotorPort 9
+#define rachetMotorPort 10
+#define puncherPort 7
+#define true 0
+#define false 1
 //#include <iostream>
 #endif
 
