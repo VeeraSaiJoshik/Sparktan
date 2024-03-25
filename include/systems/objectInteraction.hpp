@@ -4,3 +4,5 @@ void liftOperation();
 void catapultOperation();
 void expansion();
 void moveLiftMotor(int move);
+void puncherOperation();
+void wingOperation();

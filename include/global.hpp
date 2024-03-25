@@ -50,6 +50,7 @@ class OdometryPod{
 		double previousTicks = 0;
 		double wheelRadius = 0;
 		double distanceToCenter = 0;
+        double dt;
 		pros::ADIEncoder encoder;
 		OdometryPod(int portTop, int portBototm, bool reverse, int wheelRadiusTemp = 0, int distanceToCenterTemp = 0) : encoder(portTop, portBototm, reverse) {
 			wheelRadius = wheelRadiusTemp;
@@ -68,22 +69,25 @@ class OdometryPod{
 			previousTicks = encoder.get_value();
 			return deltaTicks;
 		}
-		
 		double getDistanceTraveled() {
-            double deltaTheta = getDeltaTicks() * (2*3.141592653/90);
+            double deltaTheta = getDeltaTicks() * (3.141592653/180);
+            dt = deltaTheta;
             return deltaTheta * wheelRadius;
 		}
+        int getTicks(){
+            return encoder.get_value();
+        }
 };
 
 //^ Variable Declarations
 //& General Variables
 extern double PI;
 
-extern pros::ADIDigitalIn catapultLimitSwitch;
+extern pros::ADIDigitalIn intakeBumperSwitch;
 extern bool catapultRunning;
 extern std::string autonCommandStringEncoded;
 extern pros::IMU imuController;
-extern ButtonClass matchLoadButton;
+extern ButtonClass rachetButton;
 extern ButtonClass lockLiftButton;
 extern int armTotalTicks;
 
@@ -100,7 +104,7 @@ extern pros::Motor intakeMotor;
 extern pros::Motor catapultMotor;
 extern pros::Motor liftMotor;
 extern pros::Motor rachetMotor;
-
+extern pros::Motor puncherMotor;
 //& Odometry Variables
 //* Global Location Variable
 extern double globalX;
@@ -114,3 +118,4 @@ extern OdometryPod rightPod;
 extern OdometryPod leftPod;
 extern OdometryPod backPod;
 
+extern bool wingsOut;

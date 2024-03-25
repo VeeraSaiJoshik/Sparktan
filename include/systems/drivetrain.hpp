@@ -192,5 +192,4 @@ void moveDriveTrainWithVelocity(int velocity);
 */
 void rotateDriveTrainWithVelocity(int velocity);
 
-
-
+void checkOverHeating();

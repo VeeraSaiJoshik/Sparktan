@@ -15,7 +15,6 @@ void driveTrainFunction(){
     }
 }
 void brakeDriveTrain(){
-    
     frontLeftMotor = 0;
     frontLeftMotor.brake();
     frontRightMotor = 0;
@@ -34,13 +33,14 @@ void moveLeftDrive(int voltage){
     rearLeftMotor.move_voltage(voltage * 1000);
 }
 void moveDriveTrain(double voltage){
-    moveRightDrive(voltage);
-    moveLeftDrive(voltage);
+    rearRightMotor.move_voltage(voltage * 1000);
+    rearLeftMotor.move_voltage(voltage * 1000);
+    frontRightMotor.move_voltage(voltage * 1000);
+    frontLeftMotor.move_voltage(voltage * 1000);
 }
-
 void rotateDriveTrain(double voltage){
-    moveRightDrive(voltage);
-    moveLeftDrive(-1 * voltage);
+    moveRightDrive(-1 * voltage);
+    moveLeftDrive(voltage);
 }
 void tankDrive(JoystickValues leftJoyStick, JoystickValues rightJoyStick){
     moveLeftDrive(leftJoyStick.yValue);
@@ -79,4 +79,9 @@ void rotateDriveTrainWithVelocity(int velocity){
     rearRightMotor.move_velocity(velocity * -1);
     frontLeftMotor.move_velocity(velocity);
     rearLeftMotor.move_velocity(velocity);
+}
+void checkOverHeating(){
+    if(frontRightMotor.get_temperature() >= 60 || frontLeftMotor.get_temperature() >= 60 || rearRightMotor.get_temperature() >= 60 || rearLeftMotor.get_temperature() >= 60){
+        brain.rumble("-.-.");
+    }
 }

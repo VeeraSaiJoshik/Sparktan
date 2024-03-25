@@ -47,7 +47,7 @@ void rotateRobotTo(double targetAngle){
     /*float Kp = 0.73;
     float Ki = 0.0254;
     float Kd = 2.5;*/
-    //double error= getAngularError(imuController.get_heading(), targetAngle);
+    float error= getAngularError(imuController.get_heading(), targetAngle);
     /*
     float Kp = 0.775;
     float Ki = 0.034;
@@ -57,57 +57,41 @@ void rotateRobotTo(double targetAngle){
     else if(error <= 90){
         Ki = 0.027;
     }*/
-    //! PID Constants
-    float Kp = 0.25;//1.15;
-    float Ki = 0.035;//0.0265;
-    float Kd = 1.2;//4.2;
-    //! PID Control Variables
-    double error = getAngularError(imuController.get_heading(), targetAngle);
-    double prevError = error;
-    double integral = 0;
+    float Kp = 1.15;
+    float Ki = 0.0265;
+    float Kd = 4.2;
+    float integral = 0;
     double derivative;
     double throttleSpeed;
-    bool calculateIntegral = true;    
-    //! Data Logging Variables
+    bool calculateIntegral = true;
+    float curPosition = imuController.get_heading();
+    float prevError = getAngularError(curPosition, targetAngle);
+    auto start = std::chrono::high_resolution_clock::now();
     double time = 0;
-    FILE* dataFile = fopen("/usd/rotationLogo2.txt", "w");
-    frontLeftMotor.set_brake_mode(MOTOR_BRAKE_HOLD);
-    frontRightMotor.set_brake_mode(MOTOR_BRAKE_HOLD);
-    rearLeftMotor.set_brake_mode(MOTOR_BRAKE_HOLD);
-    rearRightMotor.set_brake_mode(MOTOR_BRAKE_HOLD);
-    intakeMotor = 0;
     while(true){
         if(time > 2000)break;
         error = getAngularError(imuController.get_heading(), targetAngle);
-        pros::lcd::set_text(0, "Error : " + std::to_string(error) + "," + std::to_string(rearLeftMotor.get_actual_velocity()));
-        if(fabs(getAngularError(imuController.get_heading(), targetAngle)) < 0.7 && fabs(rearLeftMotor.get_actual_velocity()) <= 30){
+        pros::lcd::set_text(0, "Error : " + std::to_string(error) + "," + std::to_string(getDriveTrainVelocity()));
+        if(fabs(getAngularError(imuController.get_heading(), targetAngle)) < 0.4 && fabs(throttleSpeed) < 25){
             brakeDriveTrain();
-            pros::lcd::set_text(3, "Angle : " + std::to_string(imuController.get_heading()));
-            pros::lcd::set_text(3, "speed : " + std::to_string(rearLeftMotor.get_actual_velocity()));
             break;
         }
         derivative = error - prevError;
-        if(fabs(error) < 12){
-            integral += error;
-        }else{
-            integral = 0;
-        }
+        if(fabs(error) <= 20)integral += error;
+        else integral = 0;
         throttleSpeed = Kp * error + Kd * derivative + Ki * integral;
-        rotateDriveTrain(clampMotorVoltage(throttleSpeed));
+        moveDriveTrainWithVelocity(std::round(clampMotorSpeed(throttleSpeed)));
+        //Time, Current Position, Target Throttle, Actual Throttle Left Motor, Actual Throttle Right Motor, Actual Throttle Left Back Motor, Actual Thorttle Right Back Motor, Error
+        double rearLeftMotorVelocity = rearLeftMotor.get_actual_velocity();
+        double rearRightMotorVelocity = rearRightMotor.get_actual_velocity();
+        double frontLeftMotorVelocity = frontLeftMotor.get_actual_velocity();
+        double frontRightMotorVelocity = frontRightMotor.get_actual_velocity();
         prevError = error;
-        double rearLeftMotorVelocity = rearLeftMotor.get_voltage();
-        double rearRightMotorVelocity = rearRightMotor.get_voltage();
-        double frontLeftMotorVelocity = frontLeftMotor.get_voltage();
-        double frontRightMotorVelocity = frontRightMotor.get_voltage();
-        fprintf(dataFile, "%f,%f,%f,%f,%f,%f,%f\n", time, clampMotorVoltage(throttleSpeed), frontLeftMotorVelocity, frontRightMotorVelocity, rearLeftMotorVelocity, rearRightMotorVelocity, error);
-        pros::delay(15);
+        pros::delay(2);
         time += 10;
     }
-    frontLeftMotor.set_brake_mode(MOTOR_BRAKE_BRAKE);
-    frontRightMotor.set_brake_mode(MOTOR_BRAKE_BRAKE);
-    rearLeftMotor.set_brake_mode(MOTOR_BRAKE_BRAKE);
-    rearRightMotor.set_brake_mode(MOTOR_BRAKE_BRAKE);
     fclose(dataFile);
+    pros::delay(100);
 }
 
 void rotateRobotBy(double targetDegrees){
@@ -134,35 +118,10 @@ void moveRobotBy(double inches){
     }
     brakeDriveTrain();
 }
-void moveRobotByPID(double distance){
-    double kP;
-    double kI;
-    double kD;
-
-    double integral = 0;
-    double prevError = distance;
-    double throttleSpeed;
-    
-    while(true){
-        // calculating error
-        //   - finding the magnitude
-        //   - finding the direction
-
-        // checking if controller should stop
-
-        // find throttle
-            // calculate integral
-            // calculate derivative
-        
-        // Data Logging
-        pros::delay(15);
-    }
-}
 //^ Autotune Functions
 void autoTunePID(){
 
 }
-
 void gatherRotationalModelDataPoints(){
     int currentVoltage = 0;
     double previousAngle = 0;
@@ -187,9 +146,11 @@ void gatherRotationalModelDataPoints(){
 void measureMotorRPMChange(int targetRPM){
     std::fstream dataLog;
     pros::lcd::set_text(2, "started");
+    dataLog.open("/usd/MotorChangeData.csv");
     int time = 0;
     bool startTime = -1;
     pros::lcd::set_text(2, "started1");
+    dataLog << "Target RPM : " << targetRPM << std::endl;
     pros::lcd::set_text(2, "started2");
     rotateDriveTrainWithVelocity(targetRPM);
     FILE* usd_file_write = fopen("/usd/RPMThrustTest2.txt", "w");

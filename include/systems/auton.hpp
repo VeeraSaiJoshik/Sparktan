@@ -49,7 +49,7 @@ void rotateTo(double degrees);
     Input : 
         1. milliseconds : this is an integer that holds a value regarding how long the intake motor runs in milliseconds
 */
-void runIntake(int milliseconds);
+void runIntake(int milliseconds, int voltage);
 
 /*
     Function Name : runOuttake
@@ -61,7 +61,8 @@ void runIntake(int milliseconds);
     Input : 
         1. milliseconds : this is an integer that holds a value regarding how long the intake motor runs in milliseconds
 */
-void runOuttake(int milliseconds);
+void runOuttake(int milliseconds, int volt = 600);
+
 
 /*
     Function Name : haltIntakeOuttake()
@@ -88,10 +89,12 @@ void shoveIn();
 //? Odometry Functions
 void calibrateWheelAndCenterDistance();
 double getDeltaTheta(double deltaCurrent, double deltaPrevious);
+void globalizePosition();
 void updateGlobalLocation();
 void recalibratePosition();
 void displayOdomParamters();
-
+void skillsAutonomousRobot2();
+void odometryThread(void* param);
 //? Command Class
 
 /*
@@ -139,10 +142,10 @@ class autonCommand{
                     rotateTo(parameter);
                     break;*/
                 case intake:
-                    runIntake(parameter);
+                    runIntake(parameter, 600);
                     break;
                 case outtake:
-                    runOuttake(parameter);
+                    
                     break;
                 case stopIntake:
                     haltIntakeOutake();

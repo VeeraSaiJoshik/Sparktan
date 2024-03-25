@@ -1,19 +1,30 @@
 #include "main.h"
 #include "chrono"
+bool thing = false;
+    bool thing2 = true;
+void wingOperation(){
+    
+    /*
+    
+    */
+}
 void intakeOperation(){
     if(brain.get_digital(DIGITAL_R1)){
-        intakeMotor.move_velocity(600);//Intake
+        intakeMotor.move_voltage(12000);//Intake
     }else if(brain.get_digital(DIGITAL_R2)){
         intakeMotor.move_velocity(-600);//Outtake
-    }else{
+    }else if(brain.get_digital_new_press(DIGITAL_L1)){
+        runIntake(500, 600);
+    }
+    else{
         intakeMotor.move_velocity(0);
     }
 }
 void liftOperation(){
     if(brain.get_digital(DIGITAL_RIGHT)){
-        liftMotor.move_velocity(-100);
+        liftMotor.move_voltage(-12000);
     }else if(brain.get_digital(DIGITAL_LEFT)){
-        liftMotor.move_velocity(100);
+        liftMotor.move_velocity(12000);
     }else{
         liftMotor.move_velocity(0);
     }
@@ -28,12 +39,12 @@ void liftOperation(){
     }
 }
 void catapultOperation(){
-    if(matchLoadButton.checkIfButtonPressed()){
+    if(rachetButton.checkIfButtonPressed()){
         if(catapultRunning){
-            catapultMotor.brake();
+        //    catapultMotor.brake();
             catapultRunning = false;
         }else{
-            catapultMotor = 120;
+         //   catapultMotor = 120;
             catapultRunning = true;
         }
     }
@@ -49,19 +60,22 @@ void moveLiftMotor(int move){
         pros::delay(20);    
     }
 }
-void expansion(){
-    int targetTick = liftMotor.get_position() - 4000;
-    liftMotor.move_relative(-1 * 4000 , -200);
-    int time = 0;
-    while(((liftMotor.get_position() <= targetTick + armTotalTicks/180) && (liftMotor.get_position() >= targetTick  - armTotalTicks/180)) == false){
-        if(time >= 2500){
-            break;
-        }
-        pros::delay(20);
-        time += 20;
-    }
-    pros::lcd::set_text(0, "Actually im done");
-    runIntake(600);
-    pros::lcd::set_text(0, "LIFT MOTOR DONE");
 
+void rachetOperation(){
+    if(rachetButton.checkIfButtonPressed()){
+        puncherMotor = -200;
+    }else{
+        puncherMotor.brake();
+    }
+}
+void expansion(){
+    //liftMotor.move_absolute(-400, -600);
+    // Pump out wing
+    //while(fabs(liftMotor.get_position() + 400) > 5){
+      //  pros::delay(10);
+    //}
+    liftMotor.move_voltage(-12000);
+    pros::delay(300);
+    liftMotor.brake();
+    // Pump in wing
 }

@@ -1,28 +1,28 @@
 #include "main.h"
-#include "pros/motors.h"
 
 using namespace pros;
 
 double PI = 3.141592653;
 //? Drive Train Motor
-Motor frontRightMotor(frontRightMotorPort, E_MOTOR_GEAR_GREEN, true);
-Motor frontLeftMotor(frontLeftMotorPort, E_MOTOR_GEAR_GREEN, false);
-Motor rearRightMotor(rearRightMotorPort, E_MOTOR_GEAR_GREEN, true);
-Motor rearLeftMotor(rearLeftMotorPort, E_MOTOR_GEAR_GREEN, false);
+Motor frontRightMotor(frontRightMotorPort, E_MOTOR_GEAR_GREEN, false);
+Motor rearRightMotor(rearRightMotorPort, E_MOTOR_GEAR_GREEN, false);
+Motor frontLeftMotor(frontLeftMotorPort, E_MOTOR_GEAR_GREEN, true);
+Motor rearLeftMotor(rearLeftMotorPort, E_MOTOR_GEAR_GREEN, true);
 //? Object Interaction Motor
-Motor intakeMotor(intakeMotorPort, E_MOTOR_GEAR_BLUE, true);
+Motor intakeMotor(intakeMotorPort, E_MOTOR_GEAR_BLUE, false);
 //Motor catapultMotor(catapultMotorPort, E_MOTOR_GEAR_RED, false);
 Motor liftMotor(liftMotorPort, E_MOTOR_GEAR_RED, false);
 Motor rachetMotor(rachetMotorPort, E_MOTOR_GEAR_RED, false);
-Motor catapultMotor(puncherPort, E_MOTOR_GEAR_RED, false);
+//Motor catapultMotor(puncherPort, E_MOTOR_GEAR_RED, false);
+Motor puncherMotor(16, E_MOTOR_GEAR_BLUE, false);
 //? Button Class
 ButtonClass switchDriveTrainButton = ButtonClass(DIGITAL_A);
-ButtonClass matchLoadButton = ButtonClass(DIGITAL_B);
+ButtonClass rachetButton = ButtonClass(DIGITAL_B);
 ButtonClass lockLiftButton = ButtonClass(DIGITAL_DOWN);
 //? Main Variables
-DriveTrainMode driveTrainMode = Tank;
+DriveTrainMode driveTrainMode = Arcade;
 Controller brain = Controller(CONTROLLER_MASTER);
-ADIDigitalIn catapultLimitSwitch(1);
+ADIDigitalIn intakeBumperSwitch('h');
 bool catapultRunning = false;
 IMU imuController(imuPort);
 std::string autonCommandStringEncoded = ""; // <- Insert the required command for auton over here
@@ -38,8 +38,10 @@ double degToRad = PI/180;
 double distanceBackWheelToCenter = 0;
 double distanceLeftWheelToCenter = 0;
 double distanceRightWheelToCenter = 0;
-double wheelRadius = 0;
+double wheelRadius = 3.25/2;
 //* sensor variables
-OdometryPod rightPod = OdometryPod(1, 2, true, wheelRadius, distanceRightWheelToCenter);
-OdometryPod leftPod = OdometryPod(3, 4, false, wheelRadius, distanceRightWheelToCenter);
+OdometryPod rightPod = OdometryPod(1, 2, false, wheelRadius, distanceRightWheelToCenter);
+OdometryPod leftPod = OdometryPod(3, 4, true, wheelRadius, distanceRightWheelToCenter);
 OdometryPod backPod = OdometryPod(5, 6, true, wheelRadius, distanceRightWheelToCenter);
+
+bool wingsOut = false;

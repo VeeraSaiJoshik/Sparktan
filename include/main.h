@@ -1,3 +1,4 @@
+
 /**
  * \file main.h
  *
@@ -91,8 +92,6 @@ void opcontrol(void);
 #define liftMotorPort 9
 #define rachetMotorPort 10
 #define puncherPort 7
-#define true 0
-#define false 1
 //#include <iostream>
 #endif
 

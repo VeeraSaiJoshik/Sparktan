@@ -10,8 +10,10 @@ double getClockwiseError(double staringAngle, double targetAngle);
 void rotateRobotTo(double targetAngle);
 void rotateRobotBy(double targetDegrees);
 void moveRobotByPID(double distance);
+void moveRobotByPIDLambda(int distance, int trigger1, int trigger2);
 //! Movement
 void moveRobotBy(double inches);
+void testerFunction();
 //^ Autotune Functions
 void autoTunePID();
 void robotRotationModel();

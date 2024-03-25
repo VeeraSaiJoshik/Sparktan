@@ -1,4 +1,5 @@
-Below is the documentation convention that all programmers from team 719S will be using. Please document any function(s) you have added to the code base by using the followiwng comment convention above 
+Below is the documentation convention that all programmers from team 719S will be using. Please 
+document any function(s) you have added to the code base by using the followiwng comment convention above 
 said function in the respective .hpp/.h file.
 
 /*
